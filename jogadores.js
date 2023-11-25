@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const buscarDetalhesAtletaPorId = (id) => {
         if (id > 60) {
-            detalhesAtleta.innerHTML = "<p id='acabate'>Erro: ID não encontrado. Não é possível buscar detalhes do atleta.</p>";
+            detalhesAtleta.innerHTML = "<p id='error'>Erro:ID não localizado. Não é possível obter detalhes do atleta.</p>";
             return;
         }
 
