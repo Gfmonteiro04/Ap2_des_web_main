@@ -1,31 +1,31 @@
-const url = "https://botafogo-atletas.mange.li/all";
-const urlmasc = "https://botafogo-atletas.mange.li/masculino";
-const urlfem = "https://botafogo-atletas.mange.li/feminino";
+const endpoints = {
+    all: "https://botafogo-atletas.mange.li/all",
+    masculino: "https://botafogo-atletas.mange.li/masculino",
+    feminino: "https://botafogo-atletas.mange.li/feminino"
+};
 
-const body = document.body;
-body.style.display = 'flex';
-body.style.gap = '.5em';
-body.style.flexWrap = 'wrap';
+const bodyStyles = document.body.style;
+bodyStyles.display = 'flex';
+bodyStyles.gap = '.5em';
+bodyStyles.flexWrap = 'wrap';
 
 const jogadoresContainer = document.getElementById('jogadores-container');
 const carregandoElement = document.getElementById('carregando');
 
-const preenche = (atleta) => {
-    const container = document.createElement('article');
-    const titulo = document.createElement('h3');
-    const imagem = document.createElement('img');
+const preencheJogador = (atleta) => {
+    const { id, altura, nome_completo, nascimento, tipo, nome, imagem: imgSrc } = atleta;
 
-    container.dataset.id = atleta.id;
-    container.dataset.altura = atleta.altura;
-    container.dataset.nome_completo = atleta.nome_completo;
-    container.dataset.nascimento = atleta.nascimento;
-    container.dataset.tipo = atleta.tipo;
+    const container = criarElemento('article');
+    const titulo = criarElemento('h3', nome);
+    const imagem = criarElemento('img', null, { src: imgSrc, alt: `Imagem de ${nome}` });
 
-    titulo.innerText = atleta.nome;
-    imagem.src = atleta.imagem;
-    imagem.alt = `Imagem de ${atleta.nome}`;
+    container.dataset.id = id;
+    container.dataset.altura = altura;
+    container.dataset.nome_completo = nome_completo;
+    container.dataset.nascimento = nascimento;
+    container.dataset.tipo = tipo;
 
-    container.addEventListener('click', handleClick);
+    container.addEventListener('click', () => handleClick(container));
 
     container.appendChild(titulo);
     container.appendChild(imagem);
@@ -33,42 +33,54 @@ const preenche = (atleta) => {
     jogadoresContainer.appendChild(container);
 };
 
-const handleClick = (e) => {
-    const artigo = e.target.closest('article');
-    document.cookie = `id=${artigo.dataset.id}`;
-    document.cookie = `nome_completo=${artigo.dataset.nome_completo}`;
-    document.cookie = `nascimento=${artigo.dataset.nascimento}`;
-    document.cookie = `altura=${artigo.dataset.altura}`;
+const handleClick = (artigo) => {
+    const { id, nome_completo, nascimento, altura } = artigo.dataset;
 
     const dados = {
-        id: artigo.dataset.id,
-        nome_completo: artigo.dataset.nome_completo,
-        nascimento: artigo.dataset.nascimento,
-        altura: artigo.dataset.altura,
+        id,
+        nome_completo,
+        nascimento,
+        altura,
         tipo: artigo.dataset.tipo
     };
+
+    adicionarCookie('id', id);
+    adicionarCookie('nome_completo', nome_completo);
+    adicionarCookie('nascimento', nascimento);
+    adicionarCookie('altura', altura);
 
     localStorage.setItem('dados-original', JSON.stringify(artigo.dataset));
     localStorage.setItem('dados', JSON.stringify(dados));
 
-    console.log(acha_cookie('nome_completo'));
+    console.log(achaCookie('nome_completo'));
     console.log(localStorage.getItem('id'));
     console.log(JSON.parse(localStorage.getItem('dados')).altura);
 
-    window.location = `jogadores.html?id=${artigo.dataset.id}&nome_completo=${artigo.dataset.nome_completo}`;
+    redirecionarPagina(`jogadores.html?id=${id}&nome_completo=${nome_completo}`);
 };
 
-const acha_cookie = (chave) => {
-    const lista_de_cookies = document.cookie.split("; ");
-    const procurado = lista_de_cookies.find(
-        (e) => e.startsWith(chave));
+const adicionarCookie = (chave, valor) => {
+    document.cookie = `${chave}=${valor}`;
+};
+
+const achaCookie = (chave) => {
+    const listaDeCookies = document.cookie.split("; ");
+    const procurado = listaDeCookies.find((e) => e.startsWith(chave));
     return procurado.split("=")[1];
 };
 
-const pegar_coisas = async (caminho) => {
+const obterDados = async (caminho) => {
     const resposta = await fetch(caminho);
-    const dados = await resposta.json();
-    return dados;
+    return await resposta.json();
+};
+
+const criarElemento = (tag, texto = null, atributos = {}) => {
+    const elemento = document.createElement(tag);
+    if (texto) elemento.innerText = texto;
+    for (const [atributo, valor] of Object.entries(atributos)) {
+        elemento.setAttribute(atributo, valor);
+    }
+    return elemento;
 };
 
 const limparJogadores = () => {
@@ -87,19 +99,13 @@ const filtrarJogadores = async (tipo) => {
     limparJogadores();
     exibirCarregando();
 
-    let apiUrl = url;
-
-    if (tipo === 'MASCULINO') {
-        apiUrl = urlmasc;
-    } else if (tipo === 'FEMININO') {
-        apiUrl = urlfem;
-    }
+    const apiUrl = endpoints[tipo.toLowerCase()] || endpoints.all;
 
     try {
-        const entrada = await pegar_coisas(apiUrl);
+        const entrada = await obterDados(apiUrl);
 
-        for (atleta of entrada) {
-            preenche(atleta);
+        for (const atleta of entrada) {
+            preencheJogador(atleta);
         }
 
     } catch (error) {
@@ -108,118 +114,5 @@ const filtrarJogadores = async (tipo) => {
         ocultarCarregando();
     }
 };
-
-const endpointAll = "https://botafogo-atletas.mange.li/all";
-const endpointMasculino = "https://botafogo-atletas.mange.li/masculino";
-const endpointFeminino = "https://botafogo-atletas.mange.li/feminino";
-
-const pageBody = document.body;
-pageBody.style.display = 'flex';
-pageBody.style.gap = '.5em';
-pageBody.style.flexWrap = 'wrap';
-
-const playersContainer = document.getElementById('jogadores-container');
-const loadingElement = document.getElementById('carregando');
-
-const fillPlayerDetails = (player) => {
-    const container = document.createElement('article');
-    const title = document.createElement('h3');
-    const image = document.createElement('img');
-
-    container.dataset.id = player.id;
-    container.dataset.height = player.altura;
-    container.dataset.full_name = player.nome_completo;
-    container.dataset.birthdate = player.nascimento;
-    container.dataset.type = player.tipo;
-
-    title.innerText = player.nome;
-    image.src = player.imagem;
-    image.alt = `Imagem de ${player.nome}`;
-
-    container.addEventListener('click', handlePlayerClick);
-
-    container.appendChild(title);
-    container.appendChild(image);
-
-    playersContainer.appendChild(container);
-};
-
-const handlePlayerClick = (e) => {
-    const article = e.target.closest('article');
-
-    document.cookie = `id=${article.dataset.id}`;
-    document.cookie = `full_name=${article.dataset.full_name}`;
-    document.cookie = `birthdate=${article.dataset.birthdate}`;
-    document.cookie = `height=${article.dataset.height}`;
-
-    const playerData = {
-        id: article.dataset.id,
-        full_name: article.dataset.full_name,
-        birthdate: article.dataset.birthdate,
-        height: article.dataset.height,
-        type: article.dataset.type
-    };
-
-    localStorage.setItem('original-data', JSON.stringify(article.dataset));
-    localStorage.setItem('player-data', JSON.stringify(playerData));
-
-    console.log(findCookie('full_name'));
-    console.log(localStorage.getItem('id'));
-    console.log(JSON.parse(localStorage.getItem('player-data')).height);
-
-    window.location = `player-details.html?id=${article.dataset.id}&full_name=${article.dataset.full_name}`;
-};
-
-const findCookie = (key) => {
-    const cookiesList = document.cookie.split("; ");
-    const foundCookie = cookiesList.find(
-        (e) => e.startsWith(key));
-    return foundCookie.split("=")[1];
-};
-
-const fetchData = async (path) => {
-    const response = await fetch(path);
-    const data = await response.json();
-    return data;
-};
-
-const clearPlayers = () => {
-    playersContainer.innerHTML = '';
-};
-
-const showLoading = () => {
-    loadingElement.style.display = 'block';
-};
-
-const hideLoading = () => {
-    loadingElement.style.display = 'none';
-};
-
-const filterPlayers = async (type) => {
-    clearPlayers();
-    showLoading();
-
-    let apiUrl = endpointAll;
-
-    if (type === 'MASCULINO') {
-        apiUrl = endpointMasculino;
-    } else if (type === 'FEMININO') {
-        apiUrl = endpointFeminino;
-    }
-
-    try {
-        const data = await fetchData(apiUrl);
-
-        for (player of data) {
-            fillPlayerDetails(player);
-        }
-
-    } catch (error) {
-        console.error('Erro ao carregar jogadores:', error);
-    } finally {
-        hideLoading();
-    }
-};
-
 
 
