@@ -1,0 +1,11 @@
+body {
+    margin: 0;
+    padding: 0;
+    background: url('pngwing.com (5).png') no-repeat center center fixed;
+    background-size: cover;
+}
+
+#detalhesAtleta {
+    color: rgb(7, 7, 7);
+    padding: 20px;
+}
