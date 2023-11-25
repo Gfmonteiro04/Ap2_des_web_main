@@ -85,12 +85,12 @@ section {
     }
 
     #jogadores-container {
-        grid-template-columns: repeat(2, 1fr); /* Muda para 2 colunas em telas menores ou iguais a 768px */
+        grid-template-columns: repeat(2, 1fr); 
     }
 }
 
 @media screen and (min-width: 770px) {
     #jogadores-container {
-        grid-template-columns: repeat(4, 1fr); /* Mantém 4 colunas em telas maiores que 768px */
+        grid-template-columns: repeat(4, 1fr); 
     }
 }
