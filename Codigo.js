@@ -1,7 +1,7 @@
-const endpoints = {
-    all: "https://botafogo-atletas.mange.li/all",
-    masculino: "https://botafogo-atletas.mange.li/masculino",
-    feminino: "https://botafogo-atletas.mange.li/feminino"
+const apiEndpoints = {
+    all: "https://example-api.com/all",
+    male: "https://example-api.com/male",
+    female: "https://example-api.com/female"
 };
 
 const bodyStyles = document.body.style;
@@ -9,108 +9,111 @@ bodyStyles.display = 'flex';
 bodyStyles.gap = '.5em';
 bodyStyles.flexWrap = 'wrap';
 
-const jogadoresContainer = document.getElementById('jogadores-container');
-const carregandoElement = document.getElementById('carregando');
+const playersContainer = document.getElementById('players-container');
+const loadingElement = document.getElementById('loading');
 
-const preencheJogador = (atleta) => {
-    const { id, altura, nome_completo, nascimento, tipo, nome, imagem: imgSrc } = atleta;
+const fillPlayer = (player) => {
+    const container = document.createElement('article');
+    const title = document.createElement('h3');
+    const image = document.createElement('img');
 
-    const container = criarElemento('article');
-    const titulo = criarElemento('h3', nome);
-    const imagem = criarElemento('img', null, { src: imgSrc, alt: `Imagem de ${nome}` });
+    const { id, height, full_name, birthdate, type, name, image: imgSrc } = player;
 
     container.dataset.id = id;
-    container.dataset.altura = altura;
-    container.dataset.nome_completo = nome_completo;
-    container.dataset.nascimento = nascimento;
-    container.dataset.tipo = tipo;
+    container.dataset.height = height;
+    container.dataset.full_name = full_name;
+    container.dataset.birthdate = birthdate;
+    container.dataset.type = type;
 
-    container.addEventListener('click', () => handleClick(container));
+    title.innerText = name;
+    image.src = imgSrc;
+    image.alt = `Image of ${name}`;
 
-    container.appendChild(titulo);
-    container.appendChild(imagem);
+    container.addEventListener('click', handleClick);
 
-    jogadoresContainer.appendChild(container);
+    container.appendChild(title);
+    container.appendChild(image);
+
+    playersContainer.appendChild(container);
 };
 
-const handleClick = (artigo) => {
-    const { id, nome_completo, nascimento, altura } = artigo.dataset;
+const handleClick = (e) => {
+    const article = e.target.closest('article');
+    document.cookie = `id=${article.dataset.id}`;
+    document.cookie = `full_name=${article.dataset.full_name}`;
+    document.cookie = `birthdate=${article.dataset.birthdate}`;
+    document.cookie = `height=${article.dataset.height}`;
 
-    const dados = {
-        id,
-        nome_completo,
-        nascimento,
-        altura,
-        tipo: artigo.dataset.tipo
+    const data = {
+        id: article.dataset.id,
+        full_name: article.dataset.full_name,
+        birthdate: article.dataset.birthdate,
+        height: article.dataset.height,
+        type: article.dataset.type
     };
 
-    adicionarCookie('id', id);
-    adicionarCookie('nome_completo', nome_completo);
-    adicionarCookie('nascimento', nascimento);
-    adicionarCookie('altura', altura);
+    localStorage.setItem('original-data', JSON.stringify(article.dataset));
+    localStorage.setItem('player-data', JSON.stringify(data));
 
-    localStorage.setItem('dados-original', JSON.stringify(artigo.dataset));
-    localStorage.setItem('dados', JSON.stringify(dados));
-
-    console.log(achaCookie('nome_completo'));
+    console.log(findCookie('full_name'));
     console.log(localStorage.getItem('id'));
-    console.log(JSON.parse(localStorage.getItem('dados')).altura);
+    console.log(JSON.parse(localStorage.getItem('player-data')).height);
 
-    redirecionarPagina(`jogadores.html?id=${id}&nome_completo=${nome_completo}`);
+    window.location = `players.html?id=${article.dataset.id}&full_name=${article.dataset.full_name}`;
 };
 
-const adicionarCookie = (chave, valor) => {
-    document.cookie = `${chave}=${valor}`;
+const addCookie = (key, value) => {
+    document.cookie = `${key}=${value}`;
 };
 
-const achaCookie = (chave) => {
-    const listaDeCookies = document.cookie.split("; ");
-    const procurado = listaDeCookies.find((e) => e.startsWith(chave));
-    return procurado.split("=")[1];
+const findCookie = (key) => {
+    const cookieList = document.cookie.split("; ");
+    const found = cookieList.find((entry) => entry.startsWith(key));
+    return found.split("=")[1];
 };
 
-const obterDados = async (caminho) => {
-    const resposta = await fetch(caminho);
-    return await resposta.json();
+const fetchData = async (path) => {
+    const response = await fetch(path);
+    return await response.json();
 };
 
-const criarElemento = (tag, texto = null, atributos = {}) => {
-    const elemento = document.createElement(tag);
-    if (texto) elemento.innerText = texto;
-    for (const [atributo, valor] of Object.entries(atributos)) {
-        elemento.setAttribute(atributo, valor);
+const createElement = (tag, text = null, attributes = {}) => {
+    const element = document.createElement(tag);
+    if (text) element.innerText = text;
+    for (const [attribute, value] of Object.entries(attributes)) {
+        element.setAttribute(attribute, value);
     }
-    return elemento;
+    return element;
 };
 
-const limparJogadores = () => {
-    jogadoresContainer.innerHTML = '';
+const clearPlayers = () => {
+    playersContainer.innerHTML = '';
 };
 
-const exibirCarregando = () => {
-    carregandoElement.style.display = 'block';
+const showLoading = () => {
+    loadingElement.style.display = 'block';
 };
 
-const ocultarCarregando = () => {
-    carregandoElement.style.display = 'none';
+const hideLoading = () => {
+    loadingElement.style.display = 'none';
 };
 
-const filtrarJogadores = async (tipo) => {
-    limparJogadores();
-    exibirCarregando();
+const filterPlayers = async (category) => {
+    clearPlayers();
+    showLoading();
 
-    const apiUrl = endpoints[tipo.toLowerCase()] || endpoints.all;
+    const apiUrl = apiEndpoints[category.toLowerCase()] || apiEndpoints.all;
 
     try {
-        const entrada = await obterDados(apiUrl);
+        const data = await fetchData(apiUrl);
 
-        for (const atleta of entrada) {
-            preencheJogador(atleta);
+        for (const player of data) {
+            fillPlayer(player);
         }
 
     } catch (error) {
-        console.error('Erro ao carregar jogadores:', error);
+        console.error('Error loading players:', error);
     } finally {
-        ocultarCarregando();
+        hideLoading();
     }
 };
