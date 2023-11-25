@@ -114,5 +114,3 @@ const filtrarJogadores = async (tipo) => {
         ocultarCarregando();
     }
 };
-
-
