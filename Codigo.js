@@ -1,112 +1,111 @@
-const url = "https://botafogo-atletas.mange.li/all";
-const urlmasc = "https://botafogo-atletas.mange.li/masculino";
-const urlfem = "https://botafogo-atletas.mange.li/feminino";
+const endpointAll = "https://botafogo-atletas.mange.li/all";
+const endpointMasculino = "https://botafogo-atletas.mange.li/masculino";
+const endpointFeminino = "https://botafogo-atletas.mange.li/feminino";
 
-const body = document.body;
-body.style.display = 'flex';
-body.style.gap = '.5em';
-body.style.flexWrap = 'wrap';
+const pageBody = document.body;
+pageBody.style.display = 'flex';
+pageBody.style.gap = '.5em';
+pageBody.style.flexWrap = 'wrap';
 
-const jogadoresContainer = document.getElementById('jogadores-container');
-const carregandoElement = document.getElementById('carregando');
+const playersContainer = document.getElementById('jogadores-container');
+const loadingElement = document.getElementById('carregando');
 
-const preenche = (atleta) => {
-    const container = document.createElement('article');
-    const titulo = document.createElement('h3');
-    const imagem = document.createElement('img');
+const fillPlayerDetails = (player) => {
+    const playerContainer = document.createElement('article');
+    const title = document.createElement('h3');
+    const image = document.createElement('img');
 
-    container.dataset.id = atleta.id;
-    container.dataset.altura = atleta.altura;
-    container.dataset.nome_completo = atleta.nome_completo;
-    container.dataset.nascimento = atleta.nascimento;
-    container.dataset.tipo = atleta.tipo;
+    playerContainer.dataset.id = player.id;
+    playerContainer.dataset.height = player.altura;
+    playerContainer.dataset.full_name = player.nome_completo;
+    playerContainer.dataset.birthdate = player.nascimento;
+    playerContainer.dataset.type = player.tipo;
 
-    titulo.innerText = atleta.nome;
-    imagem.src = atleta.imagem;
-    imagem.alt = `Imagem de ${atleta.nome}`;
+    title.innerText = player.nome;
+    image.src = player.imagem;
+    image.alt = `Imagem de ${player.nome}`;
 
-    container.addEventListener('click', handleClick);
+    playerContainer.addEventListener('click', handlePlayerClick);
 
-    container.appendChild(titulo);
-    container.appendChild(imagem);
+    playerContainer.appendChild(title);
+    playerContainer.appendChild(image);
 
-    jogadoresContainer.appendChild(container);
+    playersContainer.appendChild(playerContainer);
 };
 
-const handleClick = (e) => {
-    const artigo = e.target.closest('article');
-    //cookie
-    document.cookie = `id=${artigo.dataset.id}`;
-    document.cookie = `nome_completo=${artigo.dataset.nome_completo}`;
-    document.cookie = `nascimento=${artigo.dataset.nascimento}`;
-    document.cookie = `altura=${artigo.dataset.altura}`;
+const handlePlayerClick = (e) => {
+    const article = e.target.closest('article');
 
-    //localStorage
-    const dados = {
-        id: artigo.dataset.id,
-        nome_completo: artigo.dataset.nome_completo,
-        nascimento: artigo.dataset.nascimento,
-        altura: artigo.dataset.altura,
-        tipo: artigo.dataset.tipo
+    document.cookie = `id=${article.dataset.id}`;
+    document.cookie = `full_name=${article.dataset.full_name}`;
+    document.cookie = `birthdate=${article.dataset.birthdate}`;
+    document.cookie = `height=${article.dataset.height}`;
+
+    const playerData = {
+        id: article.dataset.id,
+        full_name: article.dataset.full_name,
+        birthdate: article.dataset.birthdate,
+        height: article.dataset.height,
+        type: article.dataset.type
     };
 
-    localStorage.setItem('dados-original', JSON.stringify(artigo.dataset));
-    localStorage.setItem('dados', JSON.stringify(dados));
+    localStorage.setItem('original-data', JSON.stringify(article.dataset));
+    localStorage.setItem('player-data', JSON.stringify(playerData));
 
-    console.log(acha_cookie('nome_completo'));
+    console.log(findCookie('full_name'));
     console.log(localStorage.getItem('id'));
-    console.log(JSON.parse(localStorage.getItem('dados')).altura);
+    console.log(JSON.parse(localStorage.getItem('player-data')).height);
 
-    window.location = `jogadores.html?id=${artigo.dataset.id}&nome_completo=${artigo.dataset.nome_completo}`;
+    window.location = `player-details.html?id=${article.dataset.id}&full_name=${article.dataset.full_name}`;
 };
 
-const acha_cookie = (chave) => {
-    const lista_de_cookies = document.cookie.split("; ");
-    const procurado = lista_de_cookies.find(
-        (e) => e.startsWith(chave));
-    return procurado.split("=")[1];
+const findCookie = (key) => {
+    const cookiesList = document.cookie.split("; ");
+    const foundCookie = cookiesList.find(
+        (e) => e.startsWith(key));
+    return foundCookie.split("=")[1];
 };
 
-const pegar_coisas = async (caminho) => {
-    const resposta = await fetch(caminho);
-    const dados = await resposta.json();
-    return dados;
+const fetchData = async (path) => {
+    const response = await fetch(path);
+    const data = await response.json();
+    return data;
 };
 
-const limparJogadores = () => {
-    jogadoresContainer.innerHTML = '';
+const clearPlayers = () => {
+    playersContainer.innerHTML = '';
 };
 
-const exibirCarregando = () => {
-    carregandoElement.style.display = 'block';
+const showLoading = () => {
+    loadingElement.style.display = 'block';
 };
 
-const ocultarCarregando = () => {
-    carregandoElement.style.display = 'none';
+const hideLoading = () => {
+    loadingElement.style.display = 'none';
 };
 
-const filtrarJogadores = async (tipo) => {
-    limparJogadores();
-    exibirCarregando();
+const filterPlayers = async (type) => {
+    clearPlayers();
+    showLoading();
 
-    let apiUrl = url;
+    let apiUrl = endpointAll;
 
-    if (tipo === 'MASCULINO') {
-        apiUrl = urlmasc;
-    } else if (tipo === 'FEMININO') {
-        apiUrl = urlfem;
+    if (type === 'MASCULINO') {
+        apiUrl = endpointMasculino;
+    } else if (type === 'FEMININO') {
+        apiUrl = endpointFeminino;
     }
 
     try {
-        const entrada = await pegar_coisas(apiUrl);
+        const data = await fetchData(apiUrl);
 
-        for (atleta of entrada) {
-            preenche(atleta);
+        for (player of data) {
+            fillPlayerDetails(player);
         }
 
     } catch (error) {
         console.error('Erro ao carregar jogadores:', error);
     } finally {
-        ocultarCarregando();
+        hideLoading();
     }
 };
