@@ -1,51 +1,51 @@
 document.addEventListener('DOMContentLoaded', function () {
-  const criarElemento = (tag, texto) => {
-    const elemento = document.createElement(tag);
-    elemento.textContent = texto;
-    return elemento;
+  const createHTMLElement = (tag, text) => {
+    const element = document.createElement(tag);
+    element.textContent = text;
+    return element;
   };
 
-  const criarImagem = (src) => {
-    const imagem = document.createElement('img');
-    imagem.src = src;
-    return imagem;
+  const createImageElement = (src) => {
+    const image = document.createElement('img');
+    image.src = src;
+    return image;
   };
 
-  const criarParagrafo = (texto) => {
-    return criarElemento('p', texto);
+  const createParagraphElement = (text) => {
+    return createHTMLElement('p', text);
   };
 
-  const criarLinkVoltar = () => {
-    const linkVoltar = document.createElement('a');
-    linkVoltar.className = 'div_voltar';
-    linkVoltar.innerHTML = 'Voltar';
-    linkVoltar.href = './index.html';
-    linkVoltar.style.color = '#ffffff';
-    linkVoltar.style.fontSize = '23pt';
-    linkVoltar.style.textDecoration = 'none';
-    return linkVoltar;
+  const createBackLink = () => {
+    const backLink = document.createElement('a');
+    backLink.className = 'back-link';
+    backLink.innerHTML = 'Voltar';
+    backLink.href = './index.html';
+    backLink.style.color = '#ffffff';
+    backLink.style.fontSize = '23pt';
+    backLink.style.textDecoration = 'none';
+    return backLink;
   };
 
-  const descricaoJogadorElement = document.getElementById('foto_descrição');
-  descricaoJogadorElement.style.textAlign = 'center';
-  descricaoJogadorElement.style.textTransform = 'uppercase';
-  descricaoJogadorElement.style.fontWeight = 'bolder';
-  descricaoJogadorElement.style.fontFamily = 'Arial, Helvetica, sans-serif';
+  const playerDescriptionElement = document.getElementById('player_description');
+  playerDescriptionElement.style.textAlign = 'center';
+  playerDescriptionElement.style.textTransform = 'uppercase';
+  playerDescriptionElement.style.fontWeight = 'bolder';
+  playerDescriptionElement.style.fontFamily = 'Arial, Helvetica, sans-serif';
 
-  descricaoJogadorElement.appendChild(criarImagem(localStorage.getItem('imagem')));
-  descricaoJogadorElement.appendChild(criarElemento('p', localStorage.getItem('nome')));
-  descricaoJogadorElement.appendChild(criarElemento('p', localStorage.getItem('posicao')));
+  playerDescriptionElement.appendChild(createImageElement(localStorage.getItem('image')));
+  playerDescriptionElement.appendChild(createHTMLElement('p', localStorage.getItem('name')));
+  playerDescriptionElement.appendChild(createHTMLElement('p', localStorage.getItem('position')));
 
-  const detalhesDescricaoElement = document.getElementById('detalhes_descrição');
-  detalhesDescricaoElement.appendChild(criarElemento('p', localStorage.getItem('descricao')));
-  detalhesDescricaoElement.appendChild(criarElemento('p', 'Nome completo: ' + localStorage.getItem('nome_completo')));
-  detalhesDescricaoElement.appendChild(criarElemento('p', 'Nascimento: ' + localStorage.getItem('nascimento')));
-  detalhesDescricaoElement.appendChild(criarElemento('p', 'Altura: ' + localStorage.getItem('altura')));
+  const detailsDescriptionElement = document.getElementById('details_description');
+  detailsDescriptionElement.appendChild(createHTMLElement('p', localStorage.getItem('description')));
+  detailsDescriptionElement.appendChild(createHTMLElement('p', 'Nome completo: ' + localStorage.getItem('full_name')));
+  detailsDescriptionElement.appendChild(createHTMLElement('p', 'Nascimento: ' + localStorage.getItem('birthdate')));
+  detailsDescriptionElement.appendChild(createHTMLElement('p', 'Altura: ' + localStorage.getItem('height')));
 
-  const tudoElement = document.getElementById('descrição_jogador');
-  tudoElement.appendChild(descricaoJogadorElement);
-  tudoElement.appendChild(detalhesDescricaoElement);
+  const allElement = document.getElementById('player_description_container');
+  allElement.appendChild(playerDescriptionElement);
+  allElement.appendChild(detailsDescriptionElement);
 
-  document.body.appendChild(tudoElement);
-  document.body.appendChild(criarLinkVoltar());
+  document.body.appendChild(allElement);
+  document.body.appendChild(createBackLink());
 });
