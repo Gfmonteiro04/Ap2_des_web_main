@@ -110,7 +110,3 @@ const filtrarJogadores = async (tipo) => {
         ocultarCarregando();
     }
 };
-
-document.getElementById('btnSair').addEventListener('click', () => {
-    window.location.href = 'index.html'; // Redireciona para o index.html
-});
