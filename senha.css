@@ -17,13 +17,13 @@ body {
     position: absolute;
     color: white;
     text-align: center;
-    left: 149px; /* Ajustado para 0 para ocupar a largura total */
+    left: 149px; 
 }
 
 #black-line-info {
     position: absolute;
     top: 46%;
-    left: 42%; /* Centralizado horizontalmente */
+    left: 42%; 
     transform: translate(-50%, -50%);
     color: white;
     font-size: 20px;
@@ -42,7 +42,7 @@ body {
 
 .content {
     display: flex;
-    flex-direction: column; /* Alterado para coluna em telas menores */
+    flex-direction: column; 
     padding: 30px;
     overflow-x: auto;
     justify-content: center;
@@ -57,7 +57,7 @@ body {
     border: none;
     border-radius: 6px;
     box-sizing: border-box;
-    margin: 10px 0; /* Adicionado espaço entre a caixa de senha e o botão em telas menores */
+    margin: 10px 0; 
 }
 
 #submit-btn {
@@ -69,12 +69,12 @@ body {
     border-radius: 6px;
     box-sizing: border-box;
     cursor: pointer;
-    margin-top: 10px; /* Adicionado espaço acima do botão em telas menores */
+    margin-top: 10px; 
 }
 
-/* Adicione uma regra de mídia para telas até 768px */
+
 @media (max-width: 768px) {
     .content {
-        padding: 15px; /* Reduz o preenchimento em telas menores */
+        padding: 15px; 
     }
 }
