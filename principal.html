@@ -8,32 +8,65 @@
     <script src="Codigo.js" defer></script>
     <title>Atletas</title>
     <link rel="icon" href="pngwing.com (4).png">
-
     <link rel="stylesheet" href="principal.css">
-    
-
 </head>
 <body>
     <div class="black-line">
         <p id="black-line-info"> Desenvolvimento Web AP2</p>
-    
-<div>
+    </div>
     
     <div id="container">
         <div class="content">
-        <section class="button-container">
-            <button class="botoes-jog" onclick="filtrarJogadores('MASCULINO')">MASCULINO</button>
-            <button class="botoes-jog" onclick="filtrarJogadores('FEMININO')">FEMININO</button>
-            <button class="botoes-jog" onclick="filtrarJogadores('TODOS')">VER TODOS</button>
-        </section>
-        
-    </div>  
+            <section class="button-container">
+                <!-- Adiciona o novo botão para resoluções menores que 765px -->
+                <button class="botoes-jog" id="selecione-opcao" style="display: none;" onclick="mostrarBotoes()">Selecione sua opção</button>
+                <button class="botoes-jog" id="masculino" onclick="filtrarJogadores('MASCULINO')">MASCULINO</button>
+                <button class="botoes-jog" id="feminino" onclick="filtrarJogadores('FEMININO')">FEMININO</button>
+                <button class="botoes-jog" id="ver-todos" onclick="filtrarJogadores('TODOS')">VER TODOS</button>
+            </section>
+        </div>
+        <div id="carregando" style="display: none;">Carregando...</div>
+        <div id="jogadores-container"></div>
     </div>
-    <div id="carregando" style="display: none;">Carregando...</div>
-    <div id="jogadores-container"></div>
-    </div>
-</div> 
-</div> 
-</div>
+    
+    <script>
+        function mostrarBotoes() {
+            var selecioneOpcaoButton = document.getElementById('selecione-opcao');
+            var masculinoButton = document.getElementById('masculino');
+            var femininoButton = document.getElementById('feminino');
+            var verTodosButton = document.getElementById('ver-todos');
+
+            // Mostra os outros botões
+            masculinoButton.style.display = 'block';
+            femininoButton.style.display = 'block';
+            verTodosButton.style.display = 'block';
+
+            // Oculta o botão "Selecione sua opção"
+            selecioneOpcaoButton.style.display = 'none';
+        }
+
+        // Adiciona um evento de redimensionamento para mostrar ou ocultar os botões
+        window.addEventListener('resize', function() {
+            var selecioneOpcaoButton = document.getElementById('selecione-opcao');
+            var masculinoButton = document.getElementById('masculino');
+            var femininoButton = document.getElementById('feminino');
+            var verTodosButton = document.getElementById('ver-todos');
+
+            if (window.innerWidth < 765) {
+                selecioneOpcaoButton.style.display = 'block';
+                masculinoButton.style.display = 'none';
+                femininoButton.style.display = 'none';
+                verTodosButton.style.display = 'none';
+            } else {
+                selecioneOpcaoButton.style.display = 'none';
+                masculinoButton.style.display = 'block';
+                femininoButton.style.display = 'block';
+                verTodosButton.style.display = 'block';
+            }
+        });
+
+        // Dispara o evento de redimensionamento inicialmente para definir o estado dos botões
+        window.dispatchEvent(new Event('resize'));
+    </script>
 </body>
 </html>
