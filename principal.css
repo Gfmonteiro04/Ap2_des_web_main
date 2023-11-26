@@ -3,7 +3,6 @@
 body {
     margin: 0;
     padding: 0;
-    
     background-size: cover;
 }
 
@@ -58,25 +57,40 @@ section {
     justify-content: flex-start;
     max-width: 540px;
     margin: 20px auto;
+    margin-left: 38px;
 }
 
 #jogadores-container {
     display: grid;
     gap: 15px;
     margin-top: 60px;
-    margin-left: 8px;
+    margin-left: 110px;
+    margin-right: 100px;
 }
 
 .button-container {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    margin-top: 100px;
+    margin-top: 91px; 
+    background-color: #333;
+    padding: 10px; 
+    border-radius: 10px;
 }
 
 .botoes-jog {
-    margin: 5px;
+    margin: 2px;
     padding: 10px;
+    background-color: #4CAF50; 
+    color: white; 
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s; 
+}
+
+.botoes-jog:hover {
+    background-color: #45a049; 
 }
 
 @media (max-width: 768px) {
@@ -85,12 +99,12 @@ section {
     }
 
     #jogadores-container {
-        grid-template-columns: repeat(2, 1fr); 
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media screen and (min-width: 770px) {
     #jogadores-container {
-        grid-template-columns: repeat(4, 1fr); 
+        grid-template-columns: 1fr 1fr 1fr 1fr;
     }
 }
