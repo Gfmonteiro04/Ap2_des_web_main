@@ -55,52 +55,45 @@ const handleClick = (e) => {
     localStorage.setItem('dados-original', JSON.stringify(artigo.dataset));
     localStorage.setItem('dados', JSON.stringify(dados));
 
-    console.log(achaCookie('nome_completo'));
+    console.log(findstuf('nome_completo'));
     console.log(localStorage.getItem('id'));
     console.log(JSON.parse(localStorage.getItem('dados')).altura);
 
     window.location = `jogadores.html?id=${artigo.dataset.id}&nome_completo=${artigo.dataset.nome_completo}`;
 };
 
-const achaCookie = (chave) => {
-    const listaDeCookies = document.cookie.split("; ");
-    const procurado = listaDeCookies.find((e) => e.startsWith(chave));
-    return procurado.split("=")[1];
+const findstuf = (key) => {
+    const documento = document.cookie.split("; ");
+    const buscasplit = documento.find((e) => e.startsWith(key));
+    return buscasplit.split("=")[1];
 };
 
-const obterDados = async (caminho) => {
+const data = async (caminho) => {
     const resposta = await fetch(caminho);
-    const dados = await resposta.json();
-    return dados;
+    const info = await resposta.json();
+    return info;
 };
 
-const limparJogadores = () => {
+const remove = () => {
     jogadoresContainer.innerHTML = '';
 };
 
-const exibirCarregando = () => {
-    carregandoElement.style.display = 'block';
-};
-
-const ocultarCarregando = () => {
-    carregandoElement.style.display = 'none';
-};
 
 const filtrarJogadores = async (tipo) => {
-    limparJogadores();
-    exibirCarregando();
+    remove();
 
-    const apiUrl = endpoints[tipo.toLowerCase()] || endpoints.all;
+
+    const apimangeli = endpoints[tipo.toLowerCase()] || endpoints.all;
 
     try {
-        const entrada = await obterDados(apiUrl);
+        const entrada = await data(apimangeli);
 
         for (const atleta of entrada) {
             preencheJogador(atleta);
         }
 
     } catch (error) {
-        console.error('Erro ao carregar jogadores:', error);
+        console.error('Ops algo de errado não esta certo:', error);
     } finally {
         ocultarCarregando();
     }
