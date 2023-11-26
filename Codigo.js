@@ -13,11 +13,13 @@ const jogadoresContainer = document.getElementById('jogadores-container');
 const carregandoElement = document.getElementById('carregando');
 
 const preencheJogador = (atleta) => {
-    const container = document.createElement('article');
+    const container = document.createElement('div');
     const titulo = document.createElement('h3');
     const imagem = document.createElement('img');
 
     const { id, altura, nome_completo, nascimento, tipo, nome, imagem: imgSrc } = atleta;
+
+    container.classList.add('card');
 
     container.dataset.id = id;
     container.dataset.altura = altura;
